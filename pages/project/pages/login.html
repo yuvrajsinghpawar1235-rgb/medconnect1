@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | MedConnect</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="brand">MedConnect</a>
+    </div>
+  </header>
+
+  <main style="max-width: 400px; margin: 60px auto; padding: 0 20px;">
+    <div class="card">
+      <h2 style="text-align: center; margin-bottom: 8px;">Welcome Back</h2>
+      <p style="color: var(--text-muted); text-align: center; margin-bottom: 20px; font-size: 0.9rem;">
+        Log in to view your dashboard
+      </p>
+
+      <form id="login-form">
+        <div class="filter-group">
+          <label for="login-role">Account Type</label>
+          <select id="login-role">
+            <option value="patient">Patient</option>
+            <option value="doctor">Doctor</option>
+          </select>
+        </div>
+
+        <div class="filter-group" style="margin-top: 12px;">
+          <label for="login-email">Email Address</label>
+          <input type="email" id="login-email" value="patient@demo.com" required placeholder="name@example.com">
+        </div>
+
+        <div class="filter-group" style="margin-top: 12px;">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" value="password123" required placeholder="••••••••">
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+          Log In
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <script type="module">
+    import { AuthService } from '../js/services/authService.js';
+    import { Toast } from '../js/components/toast.js';
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const role = document.getElementById('login-role').value;
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+
+      try {
+        const user = await AuthService.login(email, password, role);
+        Toast.show(`Welcome, ${user.name}!`, 'success');
+
+        setTimeout(() => {
+          if (role === 'doctor') {
+            window.location.href = 'doctor-dashboard.html';
+          } else {
+            window.location.href = 'patient-dashboard.html';
+          }
+        }, 600);
+      } catch (err) {
+        Toast.show('Login failed. Please check your network or inputs.', 'error');
+      }
+    });
+  </script>
+</body>
+</html>

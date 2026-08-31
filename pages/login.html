@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Login | MedConnect</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/components.css">
+</head>
+<body style="background: var(--bg-light); display: flex; flex-direction: column; min-height: 100vh;">
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="brand">🏥 MedConnect</a>
+      <nav class="nav-links">
+        <a href="doctors.html">Find Doctors</a>
+        <a href="patient-dashboard.html">Patient Dashboard</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="display: flex; justify-content: center; align-items: center; flex: 1;">
+    <div class="card" style="width: 100%; max-width: 400px; padding: 2.5rem;">
+      <h2 style="font-size: 1.75rem; color: var(--secondary); margin-bottom: 0.25rem; text-align: center;">Account Login</h2>
+      <p style="color: var(--text-muted); text-align: center; margin-bottom: 1.5rem; font-size: 0.9rem;">Sign in to manage your appointments</p>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" class="form-control" value="rahul.patel@example.com" required>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" class="form-control" placeholder="••••••••" required>
+        </div>
+
+        <div class="form-group">
+          <label for="role">Login Role</label>
+          <select id="role" class="form-control">
+            <option value="patient">Patient Access</option>
+            <option value="doctor">Doctor Portal</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem; padding: 0.75rem;">Sign In</button>
+      </form>
+
+      <div style="text-align: center; margin-top: 1.25rem;">
+        <a href="#" style="color: var(--primary); text-decoration: none; font-size: 0.85rem;">Forgot Password?</a>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { showToast } from '../js/api/apiService.js';
+
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const role = document.getElementById('role').value;
+      showToast('Login successful! Redirecting...', 'success');
+      
+      setTimeout(() => {
+        window.location.href = role === 'patient' ? 'patient-dashboard.html' : 'doctor-dashboard.html';
+      }, 1200);
+    });
+  </script>
+</body>
+</html>

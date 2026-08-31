@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctor Portal | MedConnect</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="brand">MedConnect</a>
+      <nav class="nav-links">
+        <a href="doctor-dashboard.html" class="active">Appointments</a>
+        <a href="availability.html">Manage Availability</a>
+        <button id="logoutBtn" class="btn btn-outline btn-sm">Sign Out</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container style="padding: 2rem 0;">
+    <h2>Doctor Dashboard</h2>
+    <p class="subtitle">Manage scheduled appointments and start remote tele-consultations.</p>
+
+    <div class="dashboard-grid" style="margin-top: 1.5rem;">
+      <section class="card">
+        <h3>Today's Consultations</h3>
+        <div id="appointmentsList" style="margin-top: 1rem;">
+          <!-- Loaded dynamically via JS -->
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script type="module">
+    import { ApiService } from '../js/api/apiService.js';
+    import { CallService } from '../js/services/callService.js';
+
+    async function loadAppointments() {
+      const container = document.getElementById('appointmentsList');
+      try {
+        const appointments = await ApiService.get('appointments');
+        if (appointments.length === 0) {
+          container.innerHTML = '<p>No appointments scheduled for today.</p>';
+          return;
+        }
+
+        container.innerHTML = appointments.map(apt => `
+          <div class="card" style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong>Appointment #${apt.id}</strong> - ${apt.time}
+              <p>Type: <span>${apt.mode}</span> | Status: <strong>${apt.status}</strong></p>
+            </div>
+            <div>
+              ${apt.mode === 'Video' ? `
+                <button class="btn btn-call start-call-btn" data-apt-id="${apt.id}">
+                  Start Secure Call
+                </button>
+              ` : '<span class="text-muted">In-person Visit</span>'}
+            </div>
+          </div>
+        `).join('');
+
+        // Event delegation for launching secure call links
+        container.addEventListener('click', (e) => {
+          if (e.target.classList.contains('start-call-btn')) {
+            const aptId = e.target.getAttribute('data-apt-id');
+            const link = CallService.generateCallLink(aptId);
+            CallService.initiateCall(link);
+          }
+        });
+      } catch (err) {
+        container.innerHTML = '<p class="error">Failed to load appointments.</p>';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadAppointments);
+  </script>
+</body>
+</html>

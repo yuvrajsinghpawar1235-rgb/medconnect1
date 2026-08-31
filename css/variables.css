@@ -1,0 +1,16 @@
+:root {
+  --primary: #0284c7;
+  --primary-hover: #0369a1;
+  --secondary: #0f172a;
+  --bg-light: #f8fafc;
+  --surface: #ffffff;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --success: #10b981;
+  --danger: #ef4444;
+  --radius: 10px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}

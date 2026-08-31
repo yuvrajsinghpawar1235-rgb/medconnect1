@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Appointment | MedConnect</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="brand">MedConnect</a>
+      <nav class="nav-links">
+        <a href="doctors.html">Find Doctors</a>
+        <a href="patient-dashboard.html">Patient Dashboard</a>
+      </nav>
+    </div>
+  </header>
+
+  <main style="max-width: 600px; margin: 40px auto; padding: 0 20px;">
+    <div class="card" id="booking-card">
+      <h2>Book Appointment</h2>
+      <div id="doctor-summary" style="margin-bottom: 20px;">Loading doctor details...</div>
+
+      <form id="booking-form">
+        <div class="filter-group">
+          <label for="booking-date">Select Consultation Date</label>
+          <input type="date" id="booking-date" required>
+        </div>
+
+        <div class="filter-group">
+          <label>Select Time Slot</label>
+          <div id="slots-container" style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 5px;">
+            <p style="color:var(--text-muted); font-size:0.9rem;">Choose a date to display dynamic available time slots.</p>
+          </div>
+        </div>
+
+        <div class="filter-group" style="margin-top: 15px;">
+          <label for="booking-reason">Reason for Visit</label>
+          <textarea id="booking-reason" rows="3" placeholder="Briefly state your concern..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Confirm Booking</button>
+      </form>
+    </div>
+  </main>
+
+  <script type="module">
+    import { ApiService } from '../js/api/apiService.js';
+    import { AuthService } from '../js/services/authService.js';
+    import { Toast } from '../js/components/toast.js';
+    import { DateUtils } from '../js/utils/dateUtils.js';
+    import { SlotManager } from '../js/scheduling/slotManager.js';
+
+    const params = new URLSearchParams(window.location.search);
+    const doctorId = params.get('doctorId');
+    let selectedSlot = null;
+
+    if (!doctorId) {
+      window.location.href = 'doctors.html';
+    }
+
+    async function initBooking() {
+      const docSummary = document.getElementById('doctor-summary');
+      const dateInput = document.getElementById('booking-date');
+      const slotsContainer = document.getElementById('slots-container');
+      const form = document.getElementById('booking-form');
+
+      dateInput.min = DateUtils.getTodayDateString();
+
+      try {
+        const [doctor, existingAppointments] = await Promise.all([
+          ApiService.getDoctorById(doctorId),
+          ApiService.getAppointments()
+        ]);
+
+        docSummary.innerHTML = `
+          <div style="display:flex; gap:15px; align-items:center; background:var(--background); padding:12px; border-radius:8px; border:1px solid var(--border);">
+            <img src="${doctor.image}" width="65" height="65" style="border-radius:50%; object-fit:cover;">
+            <div>
+              <h3 style="margin:0;">${doctor.name}</h3>
+              <p style="margin:2px 0;">${doctor.specialization} • ₹${doctor.fee}</p>
+              <small style="color:var(--text-muted);">${doctor.clinic}</small>
+            </div>
+          </div>
+        `;
+
+        dateInput.addEventListener('change', () => {
+          selectedSlot = null;
+          const availableSlots = SlotManager.getAvailableSlots(existingAppointments, dateInput.value);
+          
+          if (!availableSlots.length) {
+            slotsContainer.innerHTML = '<p style="color:#dc2626;">No slots available on this date.</p>';
+            return;
+          }
+
+          slotsContainer.innerHTML = availableSlots.map(slot => `
+            <button type="button" class="btn btn-outline slot-btn" data-slot="${slot}">${slot}</button>
+          `).join('');
+
+          document.querySelectorAll('.slot-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              document.querySelectorAll('.slot-btn').forEach(b => {
+                b.style.background = '';
+                b.style.color = '';
+              });
+              e.target.style.background = 'var(--primary)';
+              e.target.style.color = '#fff';
+              selectedSlot = e.target.dataset.slot;
+            });
+          });
+        });
+
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const session = AuthService.getSession() || AuthService.login('rahul.patel@example.com', 'patient');
+
+          if (!selectedSlot) {
+            Toast.show('Please pick an available time slot.', 'error');
+            return;
+          }
+
+          const appointmentData = {
+            id: `APT-${Math.floor(1000 + Math.random() * 9000)}`,
+            doctorId,
+            patientId: session.user.id,
+            date: dateInput.value,
+            time: selectedSlot,
+            mode: doctor.mode,
+            status: 'Confirmed',
+            reason: document.getElementById('booking-reason').value
+          };
+
+          try {
+            await ApiService.createAppointment(appointmentData);
+            Toast.show('Appointment successfully scheduled!', 'success');
+            setTimeout(() => {
+              window.location.href = 'patient-dashboard.html';
+            }, 1200);
+          } catch (err) {
+            Toast.show('Failed to submit appointment booking.', 'error');
+          }
+        });
+
+      } catch (err) {
+        docSummary.innerHTML = '<p class="error">Failed to load physician details.</p>';
+      }
+    }
+
+    initBooking();
+  </script>
+</body>
+</html>

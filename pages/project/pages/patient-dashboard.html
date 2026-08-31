@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patient Dashboard | MedConnect</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="brand">MedConnect</a>
+      <nav class="nav-links">
+        <a href="patient-dashboard.html" class="active">Dashboard</a>
+        <a href="doctors.html">Find Doctors</a>
+        <a href="book-appointment.html" class="btn btn-primary">Quick Book</a>
+      </nav>
+    </div>
+  </header>
+
+  <main style="max-width: 1000px; margin: 40px auto; padding: 0 20px;">
+    <h2>Patient Portal</h2>
+
+    <!-- Profile Completion Indicator -->
+    <div style="background: #e3f2fd; padding: 12px 16px; border-radius: 8px; margin-top: 15px;">
+      <span><strong>Profile Status:</strong> 85% Complete</span>
+    </div>
+
+    <!-- Counters Row -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 20px;">
+      <div class="card" style="text-align: center;">
+        <h4>Upcoming</h4>
+        <p id="cnt-upcoming" style="font-size: 1.8rem; font-weight: bold; margin-top: 8px;">0</p>
+      </div>
+      <div class="card" style="text-align: center;">
+        <h4>Past Visits</h4>
+        <p id="cnt-past" style="font-size: 1.8rem; font-weight: bold; margin-top: 8px;">0</p>
+      </div>
+      <div class="card" style="text-align: center;">
+        <h4>Cancelled</h4>
+        <p id="cnt-cancelled" style="font-size: 1.8rem; font-weight: bold; margin-top: 8px; color: #d32f2f;">0</p>
+      </div>
+    </div>
+
+    <!-- Next Appointment Highlight -->
+    <div class="card" style="margin-top: 20px; background: #fafafa; border-left: 4px solid var(--primary, #0d8abc);">
+      <h3>Next Appointment</h3>
+      <div id="next-appointment-card" style="margin-top: 10px;">Loading next appointment...</div>
+    </div>
+
+    <!-- Appointment Filter & List -->
+    <div class="card" style="margin-top: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <h3>My Appointments</h3>
+        <input type="text" id="search-input" placeholder="Search by doctor or ref ID..." style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+      </div>
+      <div id="appointments-list" style="margin-top: 15px;">Loading appointments...</div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { ApiService } from '../js/api/apiService.js';
+    import { AuthService } from '../js/services/authService.js';
+
+    async function initPatientDashboard() {
+      const session = AuthService.protectRoute ? AuthService.protectRoute('patient') : { user: { id: 'PAT-1' } };
+
+      const [appointments, doctors] = await Promise.all([
+        ApiService.getAppointments(),
+        ApiService.getDoctors()
+      ]);
+
+      const myAppointments = appointments.filter(a => a.patientId === session.user.id);
+
+      // Render Counters
+      document.getElementById('cnt-upcoming').textContent = myAppointments.filter(a => a.status === 'Confirmed').length;
+      document.getElementById('cnt-past').textContent = myAppointments.filter(a => a.status === 'Completed').length;
+      document.getElementById('cnt-cancelled').textContent = myAppointments.filter(a => a.status === 'Cancelled').length;
+
+      // Next Appointment
+      const upcoming = myAppointments.find(a => a.status === 'Confirmed');
+      const nextCard = document.getElementById('next-appointment-card');
+      if (upcoming) {
+        const doc = doctors.find(d => d.id === upcoming.doctorId) || {};
+        nextCard.innerHTML = `
+          <p><strong>Ref:</strong> ${upcoming.id} | <strong>Doctor:</strong> ${doc.name || 'N/A'}</p>
+          <p><strong>Date & Time:</strong> ${upcoming.date} at ${upcoming.time} (${upcoming.mode})</p>
+        `;
+      } else {
+        nextCard.innerHTML = '<p>No upcoming appointments scheduled.</p>';
+      }
+
+      // Render List
+      renderList(myAppointments, doctors);
+
+      // Search Handler
+      document.getElementById('search-input').addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        const filtered = myAppointments.filter(a => {
+          const doc = doctors.find(d => d.id === a.doctorId) || {};
+          return a.id.toLowerCase().includes(query) || (doc.name && doc.name.toLowerCase().includes(query));
+        });
+        renderList(filtered, doctors);
+      });
+    }
+
+    function renderList(list, doctors) {
+      const container = document.getElementById('appointments-list');
+      if (!list.length) {
+        container.innerHTML = '<p>No matching appointments found.</p>';
+        return;
+      }
+
+      container.innerHTML = list.map(apt => {
+        const doc = doctors.find(d => d.id === apt.doctorId) || {};
+        return `
+          <div style="border-bottom: 1px solid #ddd; padding: 12px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <strong>Ref: ${apt.id}</strong> — Dr. ${doc.name || 'N/A'} (${doc.specialization || ''})
+              <p style="margin: 4px 0;">📅 ${apt.date} | 🕒 ${apt.time} | Mode: ${apt.mode} | Status: <strong>${apt.status}</strong></p>
+            </div>
+            <div>
+              ${apt.status === 'Confirmed' ? `
+                <button class="btn btn-danger btn-sm cancel-btn" data-id="${apt.id}">Cancel</button>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.querySelectorAll('.cancel-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          if (confirm('Are you sure you want to cancel this appointment?')) {
+            await ApiService.updateAppointment(e.target.dataset.id, { status: 'Cancelled' });
+            location.reload();
+          }
+        });
+      });
+    }
+
+    initPatientDashboard();
+  </script>
+</body>
+</html>

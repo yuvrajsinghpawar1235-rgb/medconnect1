@@ -1,0 +1,12 @@
+{
+  "name": "medconnect1",
+  "version": "1.0.0",
+  "description": "Healthcare Appointment & Scheduling Management Platform",
+  "main": "index.html",
+  "scripts": {
+    "server": "json-server --watch data/db.json --port 3000"
+  },
+  "dependencies": {
+    "json-server": "^1.0.0-beta.3"
+  }
+}
