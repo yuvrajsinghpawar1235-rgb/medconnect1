@@ -3,70 +3,252 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MedConnect | Healthcare Portal</title>
+  <title>MedConnect | Modern Healthcare Platform</title>
   <link rel="stylesheet" href="css/variables.css">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/components.css">
+  <style>
+    /* Hero & Aesthetics Overrides */
+    :root {
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --accent: #0f766e;
+      --bg-light: #f8fafc;
+      --text-dark: #0f172a;
+      --text-muted: #64748b;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-dark);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .hero-section {
+      background: linear-gradient(135deg, #0284c7 0%, #0f766e 100%);
+      color: white;
+      padding: 5rem 1rem 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-title {
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      margin-bottom: 1rem;
+    }
+
+    .hero-subtitle {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-hero {
+      padding: 0.8rem 1.8rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-hero-primary {
+      background-color: white;
+      color: var(--primary);
+    }
+
+    .btn-hero-secondary {
+      background-color: rgba(255, 255, 255, 0.15);
+      color: white;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-hero:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .stats-bar {
+      display: flex;
+      justify-content: space-around;
+      max-width: 900px;
+      margin: -2.5rem auto 3rem;
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+      position: relative;
+      z-index: 10;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .grid-card-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .portal-card {
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      border: 1px solid #e2e8f0;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .portal-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 12px 20px -5px rgba(2, 132, 199, 0.1);
+      transform: translateY(-4px);
+    }
+
+    .portal-icon {
+      font-size: 2.5rem;
+      background: #e0f2fe;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+    }
+  </style>
 </head>
 <body>
 
   <header class="navbar">
     <div class="nav-container">
-      <a href="index.html" class="brand" style="letter-spacing: -0.02em;">🏥 MedConnect</a>
+      <a href="index.html" class="brand">🏥 MedConnect</a>
       <nav class="nav-links">
-        <a href="pages/doctors.html">Find Doctors</a>
-        <a href="pages/patient-dashboard.html">Patient Dashboard</a>
-        <a href="pages/login-doctor.html">Doctor Portal</a>
-        <a href="pages/login-patient.html" class="btn btn-primary" style="padding: 0.4rem 1rem;">Sign In</a>
+        <a href="pages/login-patient.html" class="btn btn-outline" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">Patient Portal</a>
+        <a href="pages/login-doctor.html" class="btn btn-primary" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">Doctor Console</a>
       </nav>
     </div>
   </header>
 
-  <section class="container" style="padding: 4rem 1.5rem; text-align: center; max-width: 800px;">
-    <h1 style="font-size: 2.5rem; color: #0f172a; margin-bottom: 1rem; letter-spacing: -0.025em;">
-      Seamless Healthcare Scheduling
-    </h1>
-    <p style="font-size: 1.15rem; color: #64748b; margin-bottom: 2rem; word-spacing: 0.05em;">
-      Discover top medical specialists, pick real-time consultation slots, and manage medical appointments in one place.
-    </p>
-    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-      <a href="pages/doctors.html" class="btn btn-primary">Find a Doctor</a>
-      <a href="pages/login-patient.html" class="btn btn-outline">Patient Access</a>
+  <section class="hero-section">
+    <h1 class="hero-title">Healthcare Connected & Simplified</h1>
+    <p class="hero-subtitle">Book appointments, access teleconsultations, and manage health records with top certified medical professionals instantly.</p>
+    <div class="hero-cta">
+      <a href="pages/login-patient.html" class="btn-hero btn-hero-primary">Book Consultation →</a>
+      <a href="pages/login-doctor.html" class="btn-hero btn-hero-secondary">Doctor Access Portal</a>
     </div>
   </section>
 
-  <section class="container" style="padding-bottom: 4rem;">
-    <h2 style="text-align: center; margin-bottom: 2rem; color: #0f172a;">Why Choose MedConnect?</h2>
+  <!-- Live Platform Stats -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-num">20+</div>
+      <div class="stat-label">Specialists</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">15+</div>
+      <div class="stat-label">Specialties</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">24/7</div>
+      <div class="stat-label">Telehealth</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Secure Access</div>
+    </div>
+  </div>
+
+  <main class="container" style="padding-bottom: 4rem;">
     
-    <div class="grid-3">
-      <div class="card">
-        <h3 style="color: #0284c7; margin-bottom: 0.5rem;">Verified Specialists</h3>
-        <p style="color: #64748b; font-size: 0.95rem;">
-          Browse detailed profiles, clinical experience, patient ratings, and consultation fees.
-        </p>
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <h2 style="font-size: 1.8rem; font-weight: 700; color: var(--text-dark);">Choose Your Access Portal</h2>
+      <p style="color: var(--text-muted);">Dedicated interfaces designed specifically for patient care and clinical management.</p>
+    </div>
+
+    <div class="grid-card-section">
+      <!-- Patient Card -->
+      <div class="portal-card">
+        <div class="portal-icon">👤</div>
+        <h3 style="margin: 0 0 0.5rem 0; font-size: 1.3rem;">Patient Portal</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; flex: 1;">Search 20+ verified doctors, book in-person or video appointments, and manage medical visits with persistent account access.</p>
+        <a href="pages/login-patient.html" class="btn btn-primary" style="width: 100%; text-align: center;">Sign In as Patient</a>
       </div>
 
-      <div class="card">
-        <h3 style="color: #0284c7; margin-bottom: 0.5rem;">Instant Scheduling</h3>
-        <p style="color: #64748b; font-size: 0.95rem;">
-          Select flexible time slots for both in-person clinic visits and virtual video consultations.
-        </p>
-      </div>
-
-      <div class="card">
-        <h3 style="color: #0284c7; margin-bottom: 0.5rem;">Complete Control</h3>
-        <p style="color: #64748b; font-size: 0.95rem;">
-          Effortlessly reschedule, review, or cancel upcoming visits right from your dashboard.
-        </p>
+      <!-- Doctor Card -->
+      <div class="portal-card" style="border-top: 4px solid var(--accent);">
+        <div class="portal-icon" style="background: #ccfbf1; color: var(--accent);">🩺</div>
+        <h3 style="margin: 0 0 0.5rem 0; font-size: 1.3rem;">Doctor Console</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; flex: 1;">Access clinical schedules, set weekly consultation hours, manage teleconsultations, and review patient notes.</p>
+        <a href="pages/login-doctor.html" class="btn" style="width: 100%; text-align: center; background: var(--accent); color: white;">Sign In to Console</a>
       </div>
     </div>
-  </section>
 
-  <footer style="background: #ffffff; border-top: 1px solid #e2e8f0; padding: 2rem 0; text-align: center; color: #64748b; font-size: 0.9rem;">
-    <div class="container">
-      <p>© 2026 MedConnect Healthcare Platform. For educational demo purposes only.</p>
+    <!-- Doctor Preview Section -->
+    <div style="margin-top: 4rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <h2 style="font-size: 1.6rem; font-weight: 700; margin: 0;">Featured Specialists</h2>
+          <p style="color: var(--text-muted); margin: 0; font-size: 0.9rem;">Pre-registered board-certified doctors available on MedConnect.</p>
+        </div>
+        <a href="pages/login-patient.html" style="color: var(--primary); text-decoration: none; font-weight: 600;">View All 20 Doctors →</a>
+      </div>
+
+      <div id="doctorPreviewGrid" class="grid-card-section"></div>
     </div>
-  </footer>
 
+  </main>
+
+  <script type="module">
+    import { ApiService } from './js/api/apiService.js';
+
+    // Populate Featured Doctors Preview Grid directly from ApiService
+    const doctors = ApiService.getFallback('doctors').slice(0, 3);
+    const container = document.getElementById('doctorPreviewGrid');
+
+    if (container && doctors.length) {
+      container.innerHTML = doctors.map(doc => `
+        <div class="card" style="padding: 1.25rem; display: flex; gap: 1rem; align-items: center; background: white; border-radius: 12px; border: 1px solid #e2e8f0;">
+          <img src="${doc.image}" alt="${doc.name}" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover;">
+          <div>
+            <h4 style="margin: 0; font-size: 1.05rem;">${doc.name}</h4>
+            <span style="display: inline-block; background: #e0f2fe; color: #0284c7; padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin: 0.25rem 0;">${doc.specialization}</span>
+            <p style="margin: 0; font-size: 0.8rem; color: #64748b;">⭐ ${doc.rating} • ${doc.clinic}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+  </script>
 </body>
 </html>
