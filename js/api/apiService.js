@@ -1,12 +1,12 @@
 const BASE_URL = 'http://localhost:3000';
 
-// Default Seed Patients
+// Initial Seed Patients (Clean, production-ready email addresses)
 const INITIAL_PATIENTS = [
-  { id: "PAT-01", email: "patient@example.com", password: "password123", name: "Rahul Patel", role: "patient" },
-  { id: "PAT-02", email: "sarah.m@example.com", password: "password123", name: "Sarah Miller", role: "patient" }
+  { id: "PAT-01", email: "rahul.patel@gmail.com", password: "password123", name: "Rahul Patel", role: "patient" },
+  { id: "PAT-02", email: "sarah.miller@outlook.com", password: "password123", name: "Sarah Miller", role: "patient" }
 ];
 
-// Complete Directory of 20 Registered Physicians
+// Initial Seed Doctors (20 Pre-configured Specialists)
 const INITIAL_DOCTORS = [
   { id: "DOC-101", name: "Dr. Sarah Jenkins", specialization: "Cardiology", experience: 12, rating: 4.9, fee: 150, modes: ["In-person", "Video"], clinic: "Heart Care Institute", email: "dr.jenkins@medconnect.com", image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=300&auto=format&fit=crop&q=80" },
   { id: "DOC-102", name: "Dr. Marcus Vance", specialization: "Dermatology", experience: 9, rating: 4.8, fee: 120, modes: ["Video"], clinic: "Skin & Laser Center", email: "dr.vance@medconnect.com", image: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=300&auto=format&fit=crop&q=80" },
@@ -69,15 +69,34 @@ export const ApiService = {
   }
 };
 
-// --- Dynamic Auth & Registration Helpers ---
+// --- Authentication & User Operations ---
 
 export function getUsers() {
   let storedUsers = localStorage.getItem('med_registered_users');
-  let users = storedUsers ? JSON.parse(storedUsers) : [...INITIAL_PATIENTS];
+  let users = storedUsers ? JSON.parse(storedUsers) : [];
 
-  // Dynamically map all 20 doctors to authentication accounts
+  // Migration logic: Detect old @example.com accounts and replace with updated seeds while keeping custom registered users
+  const hasLegacyAccount = users.some(u => u.email.includes('@example.com'));
+  
+  if (hasLegacyAccount) {
+    // Keep custom users registered by the testing team, but filter out legacy seeds
+    const customUsers = users.filter(u => !u.email.includes('@example.com'));
+    
+    // Merge new initial patients with any custom registered users
+    users = [...INITIAL_PATIENTS];
+    customUsers.forEach(cu => {
+      if (!users.some(u => u.email.toLowerCase() === cu.email.toLowerCase())) {
+        users.push(cu);
+      }
+    });
+  } else if (users.length === 0) {
+    users = [...INITIAL_PATIENTS];
+  }
+
   const doctors = ApiService.getFallback('doctors');
+  let hasNewDoctor = false;
 
+  // Auto-sync 20 default doctors into the user login pool safely
   doctors.forEach(doc => {
     const docEmail = doc.email || `${doc.name.toLowerCase().replace(/[^a-z]/g, '')}@medconnect.com`;
     const exists = users.some(u => u.email.toLowerCase() === docEmail.toLowerCase());
@@ -86,15 +105,19 @@ export function getUsers() {
       users.push({
         id: doc.id,
         email: docEmail,
-        password: "docpassword123", // Default sign-in password for all 20 doctors
+        password: "docpassword123",
         name: doc.name,
         role: "doctor",
         specialization: doc.specialization
       });
+      hasNewDoctor = true;
     }
   });
 
-  localStorage.setItem('med_registered_users', JSON.stringify(users));
+  if (hasNewDoctor || hasLegacyAccount || !storedUsers) {
+    localStorage.setItem('med_registered_users', JSON.stringify(users));
+  }
+
   return users;
 }
 
@@ -135,7 +158,7 @@ export function authenticateUser(email, password, role) {
     setSession(user);
     return { success: true, user };
   }
-  return { success: false, message: 'Invalid credentials or incorrect role portal.' };
+  return { success: false, message: 'Invalid credentials or incorrect portal selected.' };
 }
 
 export function setSession(user) {
