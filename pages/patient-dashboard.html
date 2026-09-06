@@ -15,45 +15,62 @@
       <nav class="nav-links">
         <a href="doctors.html">Find Doctors</a>
         <a href="patient-dashboard.html" class="active">Patient Dashboard</a>
+        <button id="logoutBtn" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; margin-left: 1rem;">Logout</button>
       </nav>
     </div>
   </header>
 
   <main class="container" style="padding-top: 2rem;">
-    <h2>My Appointments</h2>
-    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Scheduled medical consultations and telehealth links.</p>
+    <div style="margin-bottom: 1.5rem;">
+      <h2 id="welcomeHeader" style="font-size: 1.8rem; color: #0f172a;">My Appointments</h2>
+      <p style="color: #64748b;">Manage scheduled consultations and medical notes.</p>
+    </div>
 
     <div id="appointmentsList" style="display: flex; flex-direction: column; gap: 1rem;"></div>
   </main>
 
   <script type="module">
-    import { ApiService, showToast } from '../js/api/apiService.js';
+    import { requireAuth, clearSession, ApiService, showToast } from '../js/api/apiService.js';
+
+    const currentUser = requireAuth('patient');
+
+    if (currentUser) {
+      document.getElementById('welcomeHeader').textContent = `Welcome back, ${currentUser.name}`;
+
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        clearSession();
+        showToast('Logged out successfully', 'success');
+        setTimeout(() => {
+          window.location.href = 'login-patient.html';
+        }, 800);
+      });
+
+      loadAppointments();
+    }
 
     async function loadAppointments() {
       const container = document.getElementById('appointmentsList');
       const appointments = await ApiService.get('appointments');
 
       if (!appointments || appointments.length === 0) {
-        container.innerHTML = '<div class="card" style="text-align: center; color: var(--text-muted);">No scheduled appointments found.</div>';
+        container.innerHTML = '<div class="card" style="text-align: center; color: #64748b;">No scheduled appointments found.</div>';
         return;
       }
 
       container.innerHTML = appointments.map(apt => `
         <div class="card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
           <div>
-            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">ID: ${apt.id}</span>
-            <h3 style="font-size: 1.15rem; color: var(--secondary);">${apt.doctorName}</h3>
-            <p style="font-size: 0.9rem; margin-top: 0.25rem;">📅 <strong>${apt.date}</strong> at <strong>${apt.time}</strong></p>
-            ${apt.notes ? `<p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.4rem; background: var(--bg-light); padding: 0.4rem 0.6rem; border-radius: 4px;">📝 Notes: ${apt.notes}</p>` : ''}
+            <span style="font-size: 0.8rem; color: #64748b; font-weight: 600;">ID: ${apt.id}</span>
+            <h3 style="font-size: 1.15rem; color: #0f172a; margin: 0.25rem 0;">${apt.doctorName}</h3>
+            <p style="font-size: 0.9rem; margin: 0;">📅 <strong>${apt.date}</strong> at <strong>${apt.time}</strong></p>
+            ${apt.notes ? `<p style="font-size: 0.85rem; color: #64748b; margin-top: 0.4rem; background: #f8fafc; padding: 0.4rem 0.6rem; border-radius: 4px;">📝 Notes: ${apt.notes}</p>` : ''}
           </div>
           <div>
-            ${apt.mode === 'Video' ? `<button class="btn btn-call">🎥 Join Video Call</button>` : `<span class="badge badge-inperson">In-Person Visit</span>`}
+            ${apt.mode === 'Video' ? `<button class="btn btn-call">🎥 Join Video Call</button>` : `<span style="background: #f1f5f9; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600; color: #475569;">In-Person Visit</span>`}
           </div>
         </div>
       `).join('');
     }
-
-    document.addEventListener('DOMContentLoaded', loadAppointments);
   </script>
 </body>
 </html>

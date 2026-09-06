@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Availability | MedConnect</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/components.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="brand">🏥 MedConnect</a>
+      <nav class="nav-links">
+        <a href="doctor-dashboard.html">Doctor Console</a>
+        <a href="availability.html" class="active">Manage Availability</a>
+        <button id="docLogoutBtn" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; margin-left: 1rem;">Logout</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="padding-top: 2rem; max-width: 600px;">
+    <div class="card">
+      <h2 style="font-size: 1.5rem; color: #0f766e; margin-bottom: 0.5rem;">Clinical Working Hours</h2>
+      <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem;">Configure weekly consultation time slots for patient bookings.</p>
+
+      <form id="availabilityForm">
+        <div class="form-group">
+          <label>Available Consultation Days</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;">
+            <label><input type="checkbox" checked> Monday</label>
+            <label><input type="checkbox" checked> Tuesday</label>
+            <label><input type="checkbox" checked> Wednesday</label>
+            <label><input type="checkbox" checked> Thursday</label>
+            <label><input type="checkbox" checked> Friday</label>
+            <label><input type="checkbox"> Saturday</label>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label>Shift Start</label>
+            <input type="time" class="form-control" value="09:00">
+          </div>
+          <div class="form-group">
+            <label>Shift End</label>
+            <input type="time" class="form-control" value="17:00">
+          </div>
+        </div>
+
+        <button type="submit" class="btn" style="width: 100%; background: #0f766e; color: #fff; margin-top: 1rem;">Save Schedule Settings</button>
+      </form>
+    </div>
+  </main>
+
+  <script type="module">
+    import { requireAuth, clearSession, showToast } from '../js/api/apiService.js';
+
+    requireAuth('doctor');
+
+    document.getElementById('docLogoutBtn').addEventListener('click', () => {
+      clearSession();
+      showToast('Logged out successfully', 'success');
+      setTimeout(() => window.location.href = 'login-doctor.html', 800);
+    });
+
+    document.getElementById('availabilityForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      showToast('Availability settings updated!', 'success');
+    });
+  </script>
+</body>
+</html>

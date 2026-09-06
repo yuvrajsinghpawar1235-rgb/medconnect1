@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Doctor Portal | MedConnect</title>
+  <title>Doctor Dashboard | MedConnect</title>
   <link rel="stylesheet" href="../css/variables.css">
   <link rel="stylesheet" href="../css/main.css">
   <link rel="stylesheet" href="../css/components.css">
@@ -11,72 +11,68 @@
 <body>
   <header class="navbar">
     <div class="nav-container">
-      <a href="../index.html" class="brand">MedConnect</a>
+      <a href="../index.html" class="brand">🏥 MedConnect</a>
       <nav class="nav-links">
-        <a href="doctor-dashboard.html" class="active">Appointments</a>
+        <a href="doctor-dashboard.html" class="active">Doctor Console</a>
         <a href="availability.html">Manage Availability</a>
-        <button id="logoutBtn" class="btn btn-outline btn-sm">Sign Out</button>
+        <button id="docLogoutBtn" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; margin-left: 1rem;">Logout</button>
       </nav>
     </div>
   </header>
 
-  <main class="container style="padding: 2rem 0;">
-    <h2>Doctor Dashboard</h2>
-    <p class="subtitle">Manage scheduled appointments and start remote tele-consultations.</p>
-
-    <div class="dashboard-grid" style="margin-top: 1.5rem;">
-      <section class="card">
-        <h3>Today's Consultations</h3>
-        <div id="appointmentsList" style="margin-top: 1rem;">
-          <!-- Loaded dynamically via JS -->
-        </div>
-      </section>
+  <main class="container" style="padding-top: 2rem;">
+    <div style="margin-bottom: 1.5rem;">
+      <h2 id="docHeader" style="font-size: 1.8rem; color: #0f766e;">Doctor Schedule</h2>
+      <p style="color: #64748b;">Review scheduled patient consultations and video appointments.</p>
     </div>
+
+    <div id="docAppointmentsList" style="display: flex; flex-direction: column; gap: 1rem;"></div>
   </main>
 
   <script type="module">
-    import { ApiService } from '../js/api/apiService.js';
-    import { CallService } from '../js/services/callService.js';
+    import { requireAuth, clearSession, ApiService, showToast } from '../js/api/apiService.js';
 
-    async function loadAppointments() {
-      const container = document.getElementById('appointmentsList');
-      try {
-        const appointments = await ApiService.get('appointments');
-        if (appointments.length === 0) {
-          container.innerHTML = '<p>No appointments scheduled for today.</p>';
-          return;
-        }
+    // Enforce Doctor Authorization
+    const currentDoc = requireAuth('doctor');
 
-        container.innerHTML = appointments.map(apt => `
-          <div class="card" style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
-            <div>
-              <strong>Appointment #${apt.id}</strong> - ${apt.time}
-              <p>Type: <span>${apt.mode}</span> | Status: <strong>${apt.status}</strong></p>
-            </div>
-            <div>
-              ${apt.mode === 'Video' ? `
-                <button class="btn btn-call start-call-btn" data-apt-id="${apt.id}">
-                  Start Secure Call
-                </button>
-              ` : '<span class="text-muted">In-person Visit</span>'}
-            </div>
-          </div>
-        `).join('');
+    if (currentDoc) {
+      document.getElementById('docHeader').textContent = `Welcome, ${currentDoc.name}`;
 
-        // Event delegation for launching secure call links
-        container.addEventListener('click', (e) => {
-          if (e.target.classList.contains('start-call-btn')) {
-            const aptId = e.target.getAttribute('data-apt-id');
-            const link = CallService.generateCallLink(aptId);
-            CallService.initiateCall(link);
-          }
-        });
-      } catch (err) {
-        container.innerHTML = '<p class="error">Failed to load appointments.</p>';
-      }
+      // Working Doctor Logout Listener
+      document.getElementById('docLogoutBtn').addEventListener('click', () => {
+        clearSession();
+        showToast('Doctor session terminated.', 'success');
+        setTimeout(() => {
+          window.location.href = 'login-doctor.html';
+        }, 800);
+      });
+
+      loadDoctorAppointments();
     }
 
-    document.addEventListener('DOMContentLoaded', loadAppointments);
+    async function loadDoctorAppointments() {
+      const container = document.getElementById('docAppointmentsList');
+      const appointments = await ApiService.get('appointments');
+
+      if (!appointments || appointments.length === 0) {
+        container.innerHTML = '<div class="card" style="text-align: center; color: #64748b;">No scheduled appointments found.</div>';
+        return;
+      }
+
+      container.innerHTML = appointments.map(apt => `
+        <div class="card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <span style="font-size: 0.8rem; color: #64748b; font-weight: 600;">ID: ${apt.id}</span>
+            <h3 style="font-size: 1.15rem; color: #0f172a; margin: 0.25rem 0;">Patient Booking</h3>
+            <p style="font-size: 0.9rem; margin: 0;">📅 <strong>${apt.date}</strong> at <strong>${apt.time}</strong> (${apt.mode})</p>
+            ${apt.notes ? `<p style="font-size: 0.85rem; color: #64748b; margin-top: 0.4rem;">📝 Symptoms: ${apt.notes}</p>` : ''}
+          </div>
+          <div>
+            ${apt.mode === 'Video' ? `<button class="btn btn-call">🎥 Start Teleconsultation</button>` : `<span style="background: #e6f4ea; color: #137333; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">Clinic Visit</span>`}
+          </div>
+        </div>
+      `).join('');
+    }
   </script>
 </body>
 </html>

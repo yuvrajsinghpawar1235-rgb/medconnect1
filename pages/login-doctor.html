@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctor Portal | MedConnect</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/components.css">
+</head>
+<body style="display: flex; flex-direction: column; min-height: 100vh;">
+
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="brand">🏥 MedConnect</a>
+      <nav class="nav-links">
+        <a href="login-patient.html" class="btn btn-outline" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">Patient Portal Access →</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="display: flex; justify-content: center; align-items: center; flex: 1; padding: 2rem 1rem;">
+    <div class="card" style="width: 100%; max-width: 440px; padding: 2.5rem 2rem; border-top: 4px solid #0f766e;">
+      
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <span style="font-size: 2.5rem;">🩺</span>
+        <h2 id="formTitle" class="login-title" style="color: #0f766e;">Doctor Console</h2>
+        <p class="subtitle-text">Sign in or register a new physician profile</p>
+      </div>
+
+      <!-- Sign In Form -->
+      <form id="doctorLoginForm">
+        <div class="form-group">
+          <label for="email">Doctor Email</label>
+          <input type="email" id="email" class="form-control" value="dr.jenkins@medconnect.com" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" class="form-control" value="docpassword123" required>
+        </div>
+        <button type="submit" class="btn" style="width: 100%; margin-top: 1rem; background-color: #0f766e; color: #fff;">Sign In to Console</button>
+      </form>
+
+      <!-- Register Form -->
+      <form id="doctorRegisterForm" style="display: none;">
+        <div class="form-group">
+          <label for="regDocName">Full Name (e.g. Dr. Alex Smith)</label>
+          <input type="text" id="regDocName" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="regDocSpec">Specialization</label>
+          <select id="regDocSpec" class="form-control" required>
+            <option value="Cardiology">Cardiology</option>
+            <option value="Dermatology">Dermatology</option>
+            <option value="Neurology">Neurology</option>
+            <option value="Pediatrics">Pediatrics</option>
+            <option value="Orthopedics">Orthopedics</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="regDocEmail">Doctor Email</label>
+          <input type="email" id="regDocEmail" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="regDocPassword">Password</label>
+          <input type="password" id="regDocPassword" class="form-control" required>
+        </div>
+        <button type="submit" class="btn" style="width: 100%; margin-top: 1rem; background-color: #0f766e; color: #fff;">Register Doctor Account</button>
+      </form>
+
+      <div style="text-align: center; margin-top: 1.5rem; font-size: 0.85rem;">
+        <span id="toggleText">New physician? <a href="#" id="toggleMode" style="color: #0f766e; font-weight: 600;">Register Here</a></span>
+      </div>
+
+    </div>
+  </main>
+
+  <script type="module">
+    import { authenticateUser, registerUser, getSession, showToast } from '../js/api/apiService.js';
+
+    const activeUser = getSession();
+    if (activeUser) window.location.href = activeUser.role === 'doctor' ? 'doctor-dashboard.html' : 'patient-dashboard.html';
+
+    let isRegister = false;
+    const loginForm = document.getElementById('doctorLoginForm');
+    const regForm = document.getElementById('doctorRegisterForm');
+    const toggleBtn = document.getElementById('toggleMode');
+
+    toggleBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      isRegister = !isRegister;
+      loginForm.style.display = isRegister ? 'none' : 'block';
+      regForm.style.display = isRegister ? 'block' : 'none';
+      document.getElementById('formTitle').textContent = isRegister ? 'Physician Registration' : 'Doctor Console';
+      document.getElementById('toggleText').innerHTML = isRegister 
+        ? 'Already registered? <a href="#" id="toggleMode" style="color: #0f766e; font-weight: 600;">Sign In</a>'
+        : 'New physician? <a href="#" id="toggleMode" style="color: #0f766e; font-weight: 600;">Register Here</a>';
+      document.getElementById('toggleMode').addEventListener('click', arguments.callee);
+    });
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const res = authenticateUser(document.getElementById('email').value, document.getElementById('password').value, 'doctor');
+      if (res.success) {
+        showToast('Authenticated! Opening Console...', 'success');
+        setTimeout(() => window.location.href = 'doctor-dashboard.html', 800);
+      } else {
+        showToast(res.message, 'error');
+      }
+    });
+
+    regForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newDoc = {
+        id: `DOC-${Math.floor(200 + Math.random() * 800)}`,
+        name: document.getElementById('regDocName').value,
+        specialization: document.getElementById('regDocSpec').value,
+        email: document.getElementById('regDocEmail').value,
+        password: document.getElementById('regDocPassword').value,
+        role: 'doctor'
+      };
+      const res = registerUser(newDoc);
+      if (res.success) {
+        showToast('Doctor profile created! Please sign in.', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(res.message, 'error');
+      }
+    });
+  </script>
+</body>
+</html>

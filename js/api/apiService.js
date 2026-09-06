@@ -1,31 +1,34 @@
 const BASE_URL = 'http://localhost:3000';
 
-const DEFAULT_DATA = {
-  doctors: [
-    { id: "DOC-101", name: "Dr. Sarah Jenkins", specialization: "Cardiology", experience: 12, rating: 4.9, fee: 150, modes: ["In-person", "Video"], clinic: "Metro Heart Institute", image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=300&auto=format&fit=crop&q=80" },
-    { id: "DOC-102", name: "Dr. Michael Chang", specialization: "Dermatology", experience: 8, rating: 4.7, fee: 120, modes: ["In-person", "Video"], clinic: "Derma Care Clinic", image: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=300&auto=format&fit=crop&q=80" },
-    { id: "DOC-103", name: "Dr. Elena Rostova", specialization: "Neurology", experience: 15, rating: 4.8, fee: 200, modes: ["In-person"], clinic: "Brain & Spine Center", image: "https://images.unsplash.com/photo-1594824813566-78a933f32f3f?w=300&auto=format&fit=crop&q=80" },
-    { id: "DOC-104", name: "Dr. Robert Chen", specialization: "Pediatrics", experience: 10, rating: 4.9, fee: 110, modes: ["In-person", "Video"], clinic: "Children Care Hospital", image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=300&auto=format&fit=crop&q=80" },
-    { id: "DOC-105", name: "Dr. Amara Patel", specialization: "Orthopedics", experience: 14, rating: 4.6, fee: 180, modes: ["In-person"], clinic: "Ortho Life Center", image: "https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=300&auto=format&fit=crop&q=80" },
-    { id: "DOC-106", name: "Dr. James Wilson", specialization: "Psychiatry", experience: 9, rating: 4.8, fee: 160, modes: ["Video"], clinic: "Mind Balance Virtual", image: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=300&auto=format&fit=crop&q=80" },
-    { id: "DOC-107", name: "Dr. Sophia Martinez", specialization: "Gynecology", experience: 11, rating: 4.9, fee: 140, modes: ["In-person", "Video"], clinic: "Women's Wellness Clinic", image: "https://images.unsplash.com/photo-1527613426441-4da17471b66d?w=300&auto=format&fit=crop&q=80" },
-    { id: "DOC-108", name: "Dr. David Kim", specialization: "Ophthalmology", experience: 13, rating: 4.7, fee: 130, modes: ["In-person"], clinic: "Clear Vision Institute", image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" },
-    { id: "DOC-109", name: "Dr. Lisa Ray", specialization: "Endocrinology", experience: 7, rating: 4.5, fee: 125, modes: ["Video"], clinic: "Endo Care Center", image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=300&auto=format&fit=crop&q=80" },
-    { id: "DOC-110", name: "Dr. Ahmed Hassan", specialization: "Gastroenterology", experience: 16, rating: 4.9, fee: 190, modes: ["In-person", "Video"], clinic: "Gastro Health Clinic", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&auto=format&fit=crop&q=80" },
-    { id: "DOC-111", name: "Dr. Rachel Green", specialization: "Cardiology", experience: 6, rating: 4.4, fee: 135, modes: ["In-person", "Video"], clinic: "Metro Heart Institute", image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&auto=format&fit=crop&q=80" },
-    { id: "DOC-112", name: "Dr. Kevin White", specialization: "Dermatology", experience: 5, rating: 4.3, fee: 100, modes: ["Video"], clinic: "Derma Care Clinic", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80" },
-    { id: "DOC-113", name: "Dr. Maria Garcia", specialization: "Neurology", experience: 18, rating: 5.0, fee: 220, modes: ["In-person"], clinic: "Brain & Spine Center", image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&auto=format&fit=crop&q=80" },
-    { id: "DOC-114", name: "Dr. William Taylor", specialization: "Pediatrics", experience: 4, rating: 4.6, fee: 95, modes: ["In-person", "Video"], clinic: "Children Care Hospital", image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&auto=format&fit=crop&q=80" },
-    { id: "DOC-115", name: "Dr. Priya Sharma", specialization: "Orthopedics", experience: 11, rating: 4.7, fee: 170, modes: ["In-person"], clinic: "Ortho Life Center", image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=300&auto=format&fit=crop&q=80" },
-    { id: "DOC-116", name: "Dr. Daniel Lee", specialization: "Psychiatry", experience: 12, rating: 4.8, fee: 175, modes: ["Video"], clinic: "Mind Balance Virtual", image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&auto=format&fit=crop&q=80" },
-    { id: "DOC-117", name: "Dr. Chloe Adams", specialization: "Gynecology", experience: 8, rating: 4.6, fee: 135, modes: ["In-person", "Video"], clinic: "Women's Wellness Clinic", image: "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=300&auto=format&fit=crop&q=80" },
-    { id: "DOC-118", name: "Dr. Thomas Clark", specialization: "Ophthalmology", experience: 10, rating: 4.5, fee: 140, modes: ["In-person"], clinic: "Clear Vision Institute", image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&auto=format&fit=crop&q=80" },
-    { id: "DOC-119", name: "Dr. Nina Patel", specialization: "Endocrinology", experience: 14, rating: 4.8, fee: 160, modes: ["In-person", "Video"], clinic: "Endo Care Center", image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=300&auto=format&fit=crop&q=80" },
-    { id: "DOC-120", name: "Dr. Omar Farooq", specialization: "Gastroenterology", experience: 9, rating: 4.7, fee: 155, modes: ["Video"], clinic: "Gastro Health Clinic", image: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=300&auto=format&fit=crop&q=80" }
-  ],
-  specializations: ["Cardiology", "Dermatology", "Neurology", "Pediatrics", "Orthopedics", "Psychiatry", "Gynecology", "Ophthalmology", "Endocrinology", "Gastroenterology"],
-  appointments: []
-};
+// Default Seed Patients
+const INITIAL_PATIENTS = [
+  { id: "PAT-01", email: "patient@example.com", password: "password123", name: "Rahul Patel", role: "patient" },
+  { id: "PAT-02", email: "sarah.m@example.com", password: "password123", name: "Sarah Miller", role: "patient" }
+];
+
+// Complete Directory of 20 Registered Physicians
+const INITIAL_DOCTORS = [
+  { id: "DOC-101", name: "Dr. Sarah Jenkins", specialization: "Cardiology", experience: 12, rating: 4.9, fee: 150, modes: ["In-person", "Video"], clinic: "Heart Care Institute", email: "dr.jenkins@medconnect.com", image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=300&auto=format&fit=crop&q=80" },
+  { id: "DOC-102", name: "Dr. Marcus Vance", specialization: "Dermatology", experience: 9, rating: 4.8, fee: 120, modes: ["Video"], clinic: "Skin & Laser Center", email: "dr.vance@medconnect.com", image: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=300&auto=format&fit=crop&q=80" },
+  { id: "DOC-103", name: "Dr. Elena Rostova", specialization: "Neurology", experience: 15, rating: 5.0, fee: 200, modes: ["In-person", "Video"], clinic: "Neuro Health Center", email: "dr.rostova@medconnect.com", image: "https://images.unsplash.com/photo-1594824813566-88855ce7890b?w=300&auto=format&fit=crop&q=80" },
+  { id: "DOC-104", name: "Dr. James Wilson", specialization: "Pediatrics", experience: 11, rating: 4.9, fee: 110, modes: ["In-person", "Video"], clinic: "Sunrise Children's Clinic", email: "dr.wilson@medconnect.com", image: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=300&auto=format&fit=crop&q=80" },
+  { id: "DOC-105", name: "Dr. Amara Patel", specialization: "Orthopedics", experience: 14, rating: 4.7, fee: 180, modes: ["In-person"], clinic: "Apex Joint & Bone Care", email: "dr.patel@medconnect.com", image: "https://images.unsplash.com/photo-1651008376811-b90baee60c1f?w=300&auto=format&fit=crop&q=80" },
+  { id: "DOC-106", name: "Dr. Robert Chen", specialization: "Gastroenterology", experience: 10, rating: 4.8, fee: 160, modes: ["In-person", "Video"], clinic: "Digestive Health Specialists", email: "dr.chen@medconnect.com", image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=300&auto=format&fit=crop&q=80" },
+  { id: "DOC-107", name: "Dr. Sophia Martinez", specialization: "Psychiatry", experience: 8, rating: 4.9, fee: 140, modes: ["Video"], clinic: "Mind & Wellness Studio", email: "dr.martinez@medconnect.com", image: "https://images.unsplash.com/photo-1527613426441-4da17471b66d?w=300&auto=format&fit=crop&q=80" },
+  { id: "DOC-108", name: "Dr. David Kim", specialization: "Ophthalmology", experience: 13, rating: 4.8, fee: 130, modes: ["In-person"], clinic: "ClearVision Eye Institute", email: "dr.kim@medconnect.com", image: "https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=300&auto=format&fit=crop&q=80" },
+  { id: "DOC-109", name: "Dr. Emily Taylor", specialization: "Endocrinology", experience: 7, rating: 4.6, fee: 145, modes: ["In-person", "Video"], clinic: "Metabolic & Thyroid Care", email: "dr.taylor@medconnect.com", image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=300&auto=format&fit=crop&q=80" },
+  { id: "DOC-110", name: "Dr. Michael O'Connor", specialization: "Pulmonology", experience: 16, rating: 4.9, fee: 175, modes: ["In-person", "Video"], clinic: "Respiratory Health Alliance", email: "dr.oconnor@medconnect.com", image: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=300&auto=format&fit=crop&q=80" },
+  { id: "DOC-111", name: "Dr. Priya Sharma", specialization: "Gynecology", experience: 12, rating: 4.9, fee: 155, modes: ["In-person", "Video"], clinic: "Women's Wellness Medical", email: "dr.sharma@medconnect.com", image: "https://images.unsplash.com/photo-1594824813566-88855ce7890b?w=300&auto=format&fit=crop&q=80" },
+  { id: "DOC-112", name: "Dr. Alexander Wright", specialization: "Urology", experience: 11, rating: 4.7, fee: 165, modes: ["In-person"], clinic: "City Urology Center", email: "dr.wright@medconnect.com", image: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=300&auto=format&fit=crop&q=80" },
+  { id: "DOC-113", name: "Dr. Lisa Al-Mansoor", specialization: "Rheumatology", experience: 9, rating: 4.8, fee: 140, modes: ["Video"], clinic: "Joint & Autoimmune Clinic", email: "dr.almansoor@medconnect.com", image: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=300&auto=format&fit=crop&q=80" },
+  { id: "DOC-114", name: "Dr. William Scott", specialization: "ENT (Otolaryngology)", experience: 14, rating: 4.8, fee: 125, modes: ["In-person", "Video"], clinic: "Sinus & Hearing Institute", email: "dr.scott@medconnect.com", image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=300&auto=format&fit=crop&q=80" },
+  { id: "DOC-115", name: "Dr. Hannah Abbott", specialization: "General Medicine", experience: 6, rating: 4.9, fee: 90, modes: ["In-person", "Video"], clinic: "Primary Family Practice", email: "dr.abbott@medconnect.com", image: "https://images.unsplash.com/photo-1527613426441-4da17471b66d?w=300&auto=format&fit=crop&q=80" },
+  { id: "DOC-116", name: "Dr. Daniel Brooks", specialization: "Oncology", experience: 18, rating: 5.0, fee: 220, modes: ["In-person", "Video"], clinic: "Comprehensive Cancer Care", email: "dr.brooks@medconnect.com", image: "https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=300&auto=format&fit=crop&q=80" },
+  { id: "DOC-117", name: "Dr. Maya Lin", specialization: "Allergy & Immunology", experience: 8, rating: 4.7, fee: 115, modes: ["Video"], clinic: "Allergy Care Partners", email: "dr.lin@medconnect.com", image: "https://images.unsplash.com/photo-1651008376811-b90baee60c1f?w=300&auto=format&fit=crop&q=80" },
+  { id: "DOC-118", name: "Dr. Thomas Thorne", specialization: "Nephrology", experience: 15, rating: 4.8, fee: 185, modes: ["In-person"], clinic: "Kidney Health Specialists", email: "dr.thorne@medconnect.com", image: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=300&auto=format&fit=crop&q=80" },
+  { id: "DOC-119", name: "Dr. Olivia Bennett", specialization: "Plastic Surgery", experience: 10, rating: 4.9, fee: 210, modes: ["In-person"], clinic: "Aesthetic Surgical Art", email: "dr.bennett@medconnect.com", image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=300&auto=format&fit=crop&q=80" },
+  { id: "DOC-120", name: "Dr. Kevin Garcia", specialization: "Sports Medicine", experience: 11, rating: 4.8, fee: 135, modes: ["In-person", "Video"], clinic: "Athletic Recovery Hub", email: "dr.garcia@medconnect.com", image: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=300&auto=format&fit=crop&q=80" }
+];
 
 export const ApiService = {
   async get(endpoint) {
@@ -38,15 +41,129 @@ export const ApiService = {
     }
   },
 
+  async post(endpoint, data) {
+    try {
+      const response = await fetch(`${BASE_URL}/${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return await response.json();
+    } catch (error) {
+      const current = this.getFallback(endpoint);
+      current.push(data);
+      localStorage.setItem(`med_${endpoint}`, JSON.stringify(current));
+      return data;
+    }
+  },
+
   getFallback(endpoint) {
     const stored = localStorage.getItem(`med_${endpoint}`);
     if (stored) return JSON.parse(stored);
-    
-    const initial = DEFAULT_DATA[endpoint] || [];
-    localStorage.setItem(`med_${endpoint}`, JSON.stringify(initial));
-    return initial;
+    if (endpoint === 'doctors') {
+      localStorage.setItem('med_doctors', JSON.stringify(INITIAL_DOCTORS));
+      return INITIAL_DOCTORS;
+    }
+    return [];
   }
 };
+
+// --- Dynamic Auth & Registration Helpers ---
+
+export function getUsers() {
+  let storedUsers = localStorage.getItem('med_registered_users');
+  let users = storedUsers ? JSON.parse(storedUsers) : [...INITIAL_PATIENTS];
+
+  // Dynamically map all 20 doctors to authentication accounts
+  const doctors = ApiService.getFallback('doctors');
+
+  doctors.forEach(doc => {
+    const docEmail = doc.email || `${doc.name.toLowerCase().replace(/[^a-z]/g, '')}@medconnect.com`;
+    const exists = users.some(u => u.email.toLowerCase() === docEmail.toLowerCase());
+    
+    if (!exists) {
+      users.push({
+        id: doc.id,
+        email: docEmail,
+        password: "docpassword123", // Default sign-in password for all 20 doctors
+        name: doc.name,
+        role: "doctor",
+        specialization: doc.specialization
+      });
+    }
+  });
+
+  localStorage.setItem('med_registered_users', JSON.stringify(users));
+  return users;
+}
+
+export function registerUser(newUser) {
+  const users = getUsers();
+  const exists = users.find(u => u.email.toLowerCase() === newUser.email.toLowerCase());
+  if (exists) {
+    return { success: false, message: 'An account with this email already exists!' };
+  }
+
+  users.push(newUser);
+  localStorage.setItem('med_registered_users', JSON.stringify(users));
+
+  if (newUser.role === 'doctor') {
+    const doctors = ApiService.getFallback('doctors');
+    doctors.push({
+      id: newUser.id,
+      name: newUser.name,
+      specialization: newUser.specialization || 'General Physician',
+      experience: newUser.experience || 1,
+      rating: 5.0,
+      fee: newUser.fee || 100,
+      modes: ["In-person", "Video"],
+      clinic: "MedConnect Care Center",
+      email: newUser.email,
+      image: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=300&auto=format&fit=crop&q=80"
+    });
+    localStorage.setItem('med_doctors', JSON.stringify(doctors));
+  }
+
+  return { success: true };
+}
+
+export function authenticateUser(email, password, role) {
+  const users = getUsers();
+  const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password && u.role === role);
+  if (user) {
+    setSession(user);
+    return { success: true, user };
+  }
+  return { success: false, message: 'Invalid credentials or incorrect role portal.' };
+}
+
+export function setSession(user) {
+  localStorage.setItem('med_current_user', JSON.stringify(user));
+}
+
+export function getSession() {
+  const session = localStorage.getItem('med_current_user');
+  return session ? JSON.parse(session) : null;
+}
+
+export function clearSession() {
+  localStorage.removeItem('med_current_user');
+}
+
+export function requireAuth(requiredRole) {
+  const user = getSession();
+  if (!user) {
+    window.location.href = requiredRole === 'doctor' ? 'login-doctor.html' : 'login-patient.html';
+    return null;
+  }
+  if (requiredRole && user.role !== requiredRole) {
+    showToast('Unauthorized role access.', 'error');
+    window.location.href = user.role === 'doctor' ? 'doctor-dashboard.html' : 'patient-dashboard.html';
+    return null;
+  }
+  return user;
+}
 
 export function showToast(message, type = 'success') {
   const existing = document.getElementById('mc-toast');

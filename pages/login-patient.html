@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patient Portal | MedConnect</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/components.css">
+</head>
+<body style="display: flex; flex-direction: column; min-height: 100vh;">
+
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="brand">🏥 MedConnect</a>
+      <nav class="nav-links">
+        <a href="login-doctor.html" class="btn btn-outline" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">Doctor Portal Access →</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="display: flex; justify-content: center; align-items: center; flex: 1; padding: 2rem 1rem;">
+    <div class="card" style="width: 100%; max-width: 440px; padding: 2.5rem 2rem; border-top: 4px solid #0284c7;">
+      
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <span style="font-size: 2.5rem;">👤</span>
+        <h2 id="formTitle" class="login-title">Patient Sign In</h2>
+        <p id="formSub" class="subtitle-text">Access scheduled appointments & medical records</p>
+      </div>
+
+      <!-- Sign In Form -->
+      <form id="patientLoginForm">
+        <div class="form-group">
+          <label for="email">Patient Email</label>
+          <input type="email" id="email" class="form-control" value="patient@example.com" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" class="form-control" value="password123" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Sign In</button>
+      </form>
+
+      <!-- Register Form -->
+      <form id="patientRegisterForm" style="display: none;">
+        <div class="form-group">
+          <label for="regName">Full Name</label>
+          <input type="text" id="regName" class="form-control" placeholder="John Doe" required>
+        </div>
+        <div class="form-group">
+          <label for="regEmail">Email Address</label>
+          <input type="email" id="regEmail" class="form-control" placeholder="john@example.com" required>
+        </div>
+        <div class="form-group">
+          <label for="regPassword">Password</label>
+          <input type="password" id="regPassword" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Create Patient Account</button>
+      </form>
+
+      <div style="text-align: center; margin-top: 1.5rem; font-size: 0.85rem;">
+        <span id="toggleText">Need an account? <a href="#" id="toggleMode" style="color: #0284c7; font-weight: 600;">Sign Up</a></span>
+      </div>
+
+    </div>
+  </main>
+
+  <script type="module">
+    import { authenticateUser, registerUser, getSession, showToast } from '../js/api/apiService.js';
+
+    const activeUser = getSession();
+    if (activeUser) window.location.href = activeUser.role === 'doctor' ? 'doctor-dashboard.html' : 'patient-dashboard.html';
+
+    let isRegister = false;
+    const loginForm = document.getElementById('patientLoginForm');
+    const regForm = document.getElementById('patientRegisterForm');
+    const toggleBtn = document.getElementById('toggleMode');
+
+    toggleBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      isRegister = !isRegister;
+      loginForm.style.display = isRegister ? 'none' : 'block';
+      regForm.style.display = isRegister ? 'block' : 'none';
+      document.getElementById('formTitle').textContent = isRegister ? 'Patient Registration' : 'Patient Sign In';
+      document.getElementById('toggleText').innerHTML = isRegister 
+        ? 'Already have an account? <a href="#" id="toggleMode" style="color: #0284c7; font-weight: 600;">Sign In</a>'
+        : 'Need an account? <a href="#" id="toggleMode" style="color: #0284c7; font-weight: 600;">Sign Up</a>';
+      document.getElementById('toggleMode').addEventListener('click', arguments.callee);
+    });
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const res = authenticateUser(document.getElementById('email').value, document.getElementById('password').value, 'patient');
+      if (res.success) {
+        showToast('Login successful! Redirecting...', 'success');
+        setTimeout(() => window.location.href = 'patient-dashboard.html', 800);
+      } else {
+        showToast(res.message, 'error');
+      }
+    });
+
+    regForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newUser = {
+        id: `PAT-${Math.floor(100 + Math.random() * 900)}`,
+        name: document.getElementById('regName').value,
+        email: document.getElementById('regEmail').value,
+        password: document.getElementById('regPassword').value,
+        role: 'patient'
+      };
+      const res = registerUser(newUser);
+      if (res.success) {
+        showToast('Account created! Please sign in.', 'success');
+        setTimeout(() => location.reload(), 1000);
+      } else {
+        showToast(res.message, 'error');
+      }
+    });
+  </script>
+</body>
+</html>

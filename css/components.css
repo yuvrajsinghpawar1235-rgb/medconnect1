@@ -1,10 +1,12 @@
-/* Core Page Styling & Backgrounds */
+/* Core Styling & Background */
 body {
-  background: linear-gradient(180deg, #f0f9ff 0%, #f8fafc 100%);
+  background: radial-gradient(circle at 50% 0%, #e0f2fe 0%, #f8fafc 70%);
   min-height: 100vh;
+  margin: 0;
+  font-family: system-ui, -apple-system, sans-serif;
 }
 
-/* Restored Button Styles */
+/* Button Styles */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -47,35 +49,50 @@ body {
   color: #ffffff !important;
 }
 
-.btn-call:hover {
-  background-color: #059669;
-}
-
-/* Card Containers */
-.card {
+/* Card & Modal Containers */
+.card, .modal-card {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 16px;
+  box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
 }
 
-/* Interactive Modal Dialog */
+.card {
+  padding: 1.5rem;
+}
+
+/* Doctor Avatars */
+.doctor-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.doctor-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #0284c7;
+}
+
+/* Modal Overlay */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(4px);
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.25s ease;
 }
 
 .modal-overlay.active {
@@ -84,16 +101,90 @@ body {
 }
 
 .modal-card {
-  background: #ffffff;
-  border-radius: 12px;
   width: 100%;
-  max-width: 500px;
-  padding: 2rem;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-  transform: translateY(10px);
-  transition: transform 0.2s ease;
+  max-width: 460px;
+  padding: 2.25rem;
+  transform: scale(0.95);
+  transition: transform 0.25s ease;
 }
 
 .modal-overlay.active .modal-card {
+  transform: scale(1);
+}
+
+/* Form & Typography Spacing */
+.login-title, .modal-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+  margin-bottom: 0.35rem;
+}
+
+.subtitle-text {
+  color: #64748b;
+  font-size: 0.925rem;
+  letter-spacing: 0.01em;
+  word-spacing: 0.05em;
+  line-height: 1.5;
+  margin-bottom: 1.75rem;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+  color: #475569;
+  margin-bottom: 0.45rem;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  color: #1e293b;
+  background-color: #f8fafc;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus {
+  border-color: #0284c7;
+  background-color: #ffffff;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.12);
+}
+
+/* Toast Notifications */
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #fff;
+  font-weight: 500;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.toast.show {
+  opacity: 1;
   transform: translateY(0);
 }
+
+.toast-success { background: #065f46; border-left: 4px solid #10b981; }
+.toast-error { background: #991b1b; border-left: 4px solid #ef4444; }
